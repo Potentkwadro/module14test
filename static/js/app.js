@@ -18,6 +18,7 @@ function requestAjax(url){
             console.log(data);
             createDropdown(data);
             createMetadata(data);
+            createBarChart(data);
         },
         error: function(textStatus, errorThrown) {
             console.log("FAILED to get data");
@@ -33,6 +34,7 @@ function requestD3(url) {
 
         createDropdown(data);
         createMetadata(data);
+        createBarChart(data);
     });
 }
 
@@ -51,7 +53,27 @@ function createMetadata(data) {
     let info = data.metadata.filter(x => x.id == id)[0];
     console.log(info);
     Object.entries(info).map(function(x) {
-        let html = `<h6>${x[0]}:${x[1]}</h5>`
+        let html = `<h6>${x[0]}:${x[1]}</h6>`
         $("#sample-metadata").append(html);
     });
+}
+
+
+function createBarChart(data) {
+    let id = $("#selDataset").val();
+    let sample = data.samples.filter(x => x.id == id)[0];
+
+    var trace1 = {
+        type: 'bar',
+        x: sample.sample_values.slice(0, 10).reverse(),
+        y: sample.otu_ids.map(x => `OTU ${x}`).slice(0, 10).reverse(),
+        orientation: 'h'
+    }
+
+    var data = [trace1];
+    var layout = {
+        "title":"Bar Chart Placeholder"
+    }
+
+    Plotly.newPlot('bar', data, layout);
 }
